@@ -2,21 +2,22 @@
 #include "MCUFRIEND_kbv.h"
 MCUFRIEND_kbv tft;
 uint16_t ox = 0, oy = 0;
-int ave = 0, avec = 0, avet = 0;
+int ave = 0, avec = 0; 
+double avet = 0;
 ////////////////////////////////////////////////////////////////
 void aveg(void)
 { int z = 0;
   Serial.println(ave);
   Serial.println(avec);
-  avet = ave / avec;
+  avet = ave / (double)avec;
   Serial.println(avet);
   avet = avet * 21;
   for (int i = 0; i < 24; i++) {
     for (uint16_t a = 0; a < 3; a++) {
-      tft.drawLine(avet + a, z, avet + a, z + 10, 0xFB21);
+      tft.drawLine(avet + a, z, avet + a, z + 10, 0x0FFA);
     } // thick
     for (uint16_t a = 0; a < 2; a++) {
-      tft.drawLine(avet - a, z, avet - a, z + 10, 0xFB21);
+      tft.drawLine(avet - a, z, avet - a, z + 10, 0x0FFA);
     } delay(100); z = z + 20;
   }
 }
@@ -25,9 +26,9 @@ void dchart_10x10(uint16_t nx, uint16_t ny) {
   avec++;
   nx = nx * 21;
   ny = ny * 32;
-  tft.drawCircle(nx, ny, 10, 0xF025);
-  tft.drawCircle(nx, ny, 9, 0xF025);
-  tft.fillCircle(nx, ny, 7, 0xF025);
+  tft.drawCircle(nx, ny, 7, 0xFC60);
+  tft.drawCircle(nx, ny, 6, 0xFC60);
+  tft.fillCircle(nx, ny, 4, 0xFC60);
   delay (100);
   ox = nx;
   oy = ny;
@@ -51,22 +52,22 @@ void dotchart_10x10(uint16_t nx, uint16_t ny) {
   }
   else
     sign = 0;
+  for (uint16_t a = 0; a < 2; a++) {
+    tft.drawLine(ox + a, oy, nx + a, ny, 0xFC00);
+  } // thick
+  for (uint16_t a = 0; a < 2; a++) {
+    tft.drawLine(ox, oy + a, nx, ny + a, 0xFC00);
+  }
   for (int a = 0; a < (ny - oy); a++)
   {
     fplus += xmines / ymines;
     plus = fplus;
     if (sign == 1)
-      tft.drawFastHLine(0, y, x - plus, 0xD128);
+      tft.drawFastHLine(0, y, x - plus, 0xA040);
     else
-      tft.drawFastHLine(0, y, x + plus, 0xD128);
+      tft.drawFastHLine(0, y, x + plus, 0xA040);
     y++;
     delay(5);
-  }
-  for (uint16_t a = 0; a < 2; a++) {
-    tft.drawLine(ox + a, oy, nx + a, ny, 0xFB21);
-  } // thick
-  for (uint16_t a = 0; a < 2; a++) {
-    tft.drawLine(ox, oy + a, nx, ny + a, 0xFB21);
   }
   ox = nx;
   oy = ny;
@@ -105,13 +106,13 @@ void loop() {
   dchart_10x10(10, 10);
   tft.setRotation(1);
   tft.setTextSize(2);
-  tft.setTextColor(0x01E8);
+  tft.setTextColor(0xF700);
   tft.setCursor(20, 20);
   tft.print("Average");
   int dl = 20;
   for (int i = 0; i < 6; i++) {
     for (uint16_t a = 0; a < 3; a++) {
-      tft.drawLine(dl, 40 + a, dl + 10, 40 + a, 0xFB21);
+      tft.drawLine(dl, 40 + a, dl + 10, 40 + a, 0x0FFA);
     }
     dl += 16;
   }
