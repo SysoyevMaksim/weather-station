@@ -20,6 +20,7 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BME280.h>
+#include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
 
 #define BME_SCK 13
 #define BME_MISO 12
@@ -29,33 +30,21 @@
 #define SEALEVELPRESSURE_HPA (1013.25)
 
 Adafruit_BME280 bme; // I2C
-//Adafruit_BME280 bme(BME_CS); // hardware SPI
-//Adafruit_BME280 bme(BME_CS, BME_MOSI, BME_MISO, BME_SCK); // software SPI
-
-
-
-#include <TFT_eSPI.h> // Graphics and font library for ILI9341 driver chip
-#include <SPI.h>
-
-#define TFT_GREY 0x5AEB // New colour
-
 TFT_eSPI tft = TFT_eSPI();  // Invoke library
-
-
 
 unsigned long delayTime;
 
 void setup() {
     Serial.begin(115200);
-    tft.begin();
-    tft.setRotation(2);
     while(!Serial);    // time to get serial running
     Serial.println(F("BME280 test"));
 
     unsigned status;
     
-    // default settings
-    status = bme.begin();  
+    Wire.begin(21, 22); 
+    Wire.setClock(100000); 
+    status = bme.begin(0x76);  
+    
     // You can also pass in a Wire library object like &Wire2
     // status = bme.begin(0x76, &Wire2)
     if (!status) {
@@ -72,14 +61,20 @@ void setup() {
     delayTime = 1000;
 
     Serial.println();
+
+    tft.begin();
+    tft.setRotation(2);
+    tft.fillScreen(TFT_BLACK);
+    tft.setTextColor(TFT_WHITE, TFT_BLACK);
+    tft.setCursor(0, 0, 2);
 }
 
 
 void loop() { 
     printValues();
-    tft.fillScreen(TFT_WHITE);
-    tft.setCursor(0, 0, 12);
-    tft.setTextColor(TFT_BLACK);  tft.setTextSize(6);
+    
+    tft.setCursor(0, 0);
+    
     tft.print("Temperature = ");
     tft.print(bme.readTemperature());
     tft.println(" *C");
